@@ -62,6 +62,7 @@ public class RedirectDetector {
                  //configFileに50行やったら書き込み
                 if(tripleCount%50 == 0){
                     config.addProperty("tripleCount", String.valueOf(tripleCount));
+                    config.storeToXML(configFileName);
                     System.out.println("CurrentCount: " + tripleCount);
                 }
                 
@@ -70,23 +71,31 @@ public class RedirectDetector {
 
                 //現在の状況を表示
                 System.out.println(connector.toString());
-
+                tripleCount++;
+                
+                if(400 < connector.getResponseCode() &&  connector.getResponseCode() < 600) {
+                    Thread.sleep(8000);
+                    connector = new DBpediaConnector(new URL(getSubjectString(s)));
+                }
+               
                 //リダイレクト検出
                 if(connector.isRedirect()) {
-                    System.out.println("\tFind Redirect :" + redirectCount++);
-                    
+                    System.out.println("\tFind Redirect :" + ++redirectCount);
+                    config.addProperty("redirectCount", "redirectCount");
+
                     /* 
                      * 出力ファイルに、以前のURL, 現在のURL, レスポンスメッセージ, レスポンスコード, 行番号を書き込み
                      * ファイルへ書き込み
                      */               
                     pw = new PrintWriter(new BufferedWriter(new FileWriter(new File(writeFileName), true)));
                     pw.println("Redirected\t<" +connector.preUrl.toString() + ">, <" + connector.currentUrl + "> " 
-                            + connector.getResponseCode() + " " + connector.getResponseMessage() + "count: " + (tripleCount++));
+                            + connector.getResponseCode() + " " + connector.getResponseMessage() + "count: " + (tripleCount));
                     pw.close();
                 }
                 
                 if(connector.isNoEntry()) {
-                    System.out.println("\tFind NoEntry :" + redirectCount++);
+                    System.out.println("\tFind NoEntry :" + ++redirectCount);
+                    config.addProperty("redirectCount", "redirectCount");
                     
                     /* 
                      * 出力ファイルに、以前のURL, 現在のURL, レスポンスメッセージ, レスポンスコード, 行番号を書き込み
@@ -94,10 +103,10 @@ public class RedirectDetector {
                      */               
                     pw = new PrintWriter(new BufferedWriter(new FileWriter(new File(writeFileName), true)));
                     pw.println("NoEntry\t<" +connector.preUrl.toString() + ">, <" + connector.currentUrl + "> " 
-                            + connector.getResponseCode() + ", " + connector.getResponseMessage() + "  count: " + (tripleCount++));
+                            + connector.getResponseCode() + ", " + connector.getResponseMessage() + "  count: " + (tripleCount));
                     pw.close();
                 }
-                tripleCount++;
+                
                 Thread.sleep(5000);
             }     
             System.out.println(redirectCount);
