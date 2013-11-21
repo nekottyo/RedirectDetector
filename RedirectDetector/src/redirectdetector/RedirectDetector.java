@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -28,9 +27,11 @@ import java.util.Map;
  */
 public class RedirectDetector {
     static String configFileName = "./conf/config.cnf";
+
     /**
      * @param args the command line arguments
      */
+    @SuppressWarnings("empty-statement")
     public static void main(String[] args) {
         // TODO code application logic here
         String readFileName ="./data/labels_en.nt";
@@ -38,7 +39,7 @@ public class RedirectDetector {
         int redirectCount = 0;
         
         LineNumberReader nr = null;
-        URL uri = null;
+        URL url = null;
         Map<String, String> redirectsMap = new HashMap<>();
         BufferedReader br = null;
         PrintWriter pw = null;
@@ -57,61 +58,47 @@ public class RedirectDetector {
                 nr.readLine();
             }
             br.close();
-            
-            
-            
-
-           
+        
             while((s = nr.readLine()) != null){
-                uri = new URL(getSubjectString(s));
-                HttpURLConnection connection = (HttpURLConnection) uri.openConnection();
-
-                String redirectUri = connection.getURL().toString();
-
-                //configFileに50行やったら書き込み
+                 //configFileに50行やったら書き込み
                 if(tripleCount%50 == 0){
                     PrintWriter pw2 = new PrintWriter(new BufferedWriter(new FileWriter(new File(configFileName))));
-                    pw2.println(tripleCount++);
+                    pw2.println(tripleCount);
                     pw2.close();
+                    System.out.println("CurrentCount: " + tripleCount);
                 }
                 
+                url = new URL(getSubjectString(s));
+                
+                //コネクションを確立
+                connectionEstablish(url);
 
-                int responseCode = connection.getResponseCode();
-                String responseMessage = connection.getResponseMessage();
-                System.out.println("Connecting: " + uri.toString()+ "\t" + "Code:" + responseCode + " Message:" + responseMessage);
-
+                //現在の状況を表示
+                System.out.println("Connecting: " + url.toString()+ "\t" + "Code:" + responseCode + " Message:" + responseMessage);
+                connection.getURL().toString();
 
                 //リダイレクト検出
-                if(!uri.toString().equals(redirectUri.toString())) {
-
+                if(isRedirect(url) ||) {
                     System.out.println("\tFind Redirect :" + redirectCount++);
                     //redirectsMap.put(uri.toString(), redirectUri.toString());
                     pw = new PrintWriter(new BufferedWriter(new FileWriter(new File(writeFileName), true)));
-                    pw.println("<" +uri.toString() + ">, <" + redirectUri.toString() + "> " + responseCode + " " + responseMessage + "count: " + tripleCount);
+                    pw.println("<" +url.toString() + ">, <" + redirectUri.toString() + "> " + responseCode + " " + responseMessage + "count: " + tripleCount);
                     pw.close();
                 }
+                tripleCount++;
                 Thread.sleep(8000);
             }     
-//            for(Iterator it = redirectsMap.entrySet().iterator(); it.hasNext();) {
-//                Map.Entry entry = (Map.Entry)it.next();
-//                
-//               
-//            }
-//            pw.println(redirectCount);
             System.out.println(redirectCount);
             
        } catch (IOException e) {
-            e.toString();
             e.printStackTrace();
-       // } catch () {
-            
         } catch (Exception e) {
             e.printStackTrace();;
         }
-        pw.close();
     }
     
     /**
+     * 
      * @param line - nTriplesファイルの1line
      * @return Subject
      */
@@ -154,4 +141,70 @@ public class RedirectDetector {
         }
         return buffString;
     }
+    
+
+    
+
+}
+
+class dbpediaConnecter {
+    static URL preUrl;
+    static HttpURLConnection connection;
+    static Integer responseCode;
+    static String responseMessage;
+    static String currentUrl;
+    
+    /**
+     * 
+     * @param url
+     * @throws IOException 
+     * @param コネクションを確立
+     */
+    public dbpediaConnecter(URL url) throws IOException {
+        preUrl = url;
+        connection = (HttpURLConnection) url.openConnection();
+        responseCode = connection.getResponseCode();
+        responseMessage = connection.getResponseMessage();   
+        currentUrl = connection.getURL().toString();
+    }
+    
+    /**
+     * 
+     * @param url
+     * @return リダイレクト(接続URLと現在のURLが別)を検出したらtrue
+     * @throws IOException 
+     */
+    public Boolean isRedirect() throws IOException {
+        return !preUrl.toString().equals(currentUrl.toString());
+    }
+    
+    public Boolean isNoEntry() {
+        
+        return null;
+    }
+
+    
+    
+    public static URL getPreUrl() {
+        return preUrl;
+    }
+
+    public static HttpURLConnection getConnection() {
+        return connection;
+    }
+
+    public static Integer getResponseCode() {
+        return responseCode;
+    }
+
+    public static String getResponseMessage() {
+        return responseMessage;
+    }
+
+    public static String getCurrentUrl() {
+        return currentUrl;
+    }
+    
+    
+    
 }
