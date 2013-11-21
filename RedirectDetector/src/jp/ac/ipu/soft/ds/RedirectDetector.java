@@ -81,7 +81,7 @@ public class RedirectDetector {
                      */               
                     pw = new PrintWriter(new BufferedWriter(new FileWriter(new File(writeFileName), true)));
                     pw.println("Redirected\t<" +connector.preUrl.toString() + ">, <" + connector.currentUrl + "> " 
-                            + connector.getResponseCode() + " " + connector.getResponseMessage() + "count: " + (tripleCount));
+                            + connector.getResponseCode() + " " + connector.getResponseMessage() + "count: " + (tripleCount++));
                     pw.close();
                 }
                 
@@ -94,7 +94,7 @@ public class RedirectDetector {
                      */               
                     pw = new PrintWriter(new BufferedWriter(new FileWriter(new File(writeFileName), true)));
                     pw.println("NoEntry\t<" +connector.preUrl.toString() + ">, <" + connector.currentUrl + "> " 
-                            + connector.getResponseCode() + ", " + connector.getResponseMessage() + "  count: " + (tripleCount));
+                            + connector.getResponseCode() + ", " + connector.getResponseMessage() + "  count: " + (tripleCount++));
                     pw.close();
                 }
                 tripleCount++;
