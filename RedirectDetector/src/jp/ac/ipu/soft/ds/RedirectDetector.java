@@ -73,14 +73,19 @@ public class RedirectDetector {
                 System.out.println(connector.toString());
                 tripleCount++;
                 
-                if(400 < connector.getResponseCode() &&  connector.getResponseCode() < 600) {
-                    Thread.sleep(8000);
+                int i = 1;
+                while(400 < connector.getResponseCode() &&  connector.getResponseCode() < 600) {
+                    Thread.sleep(30000*i++);
                     connector = new DBpediaConnector(new URL(getSubjectString(s)));
+                    if(i < 5){
+                        break;
+                    }
+
                 }
                
                 //リダイレクト検出
                 if(connector.isRedirect()) {
-                    System.out.println("\tFind Redirect :" + ++redirectCount);
+                    System.out.println("\tFind Redirect :"  + ++redirectCount);
                     config.addProperty("redirectCount", "redirectCount");
 
                     /* 
@@ -107,7 +112,7 @@ public class RedirectDetector {
                     pw.close();
                 }
                 
-                Thread.sleep(5000);
+                Thread.sleep(30000);
             }     
             System.out.println(redirectCount);
             
