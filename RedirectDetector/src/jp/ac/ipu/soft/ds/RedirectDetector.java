@@ -53,14 +53,14 @@ public class RedirectDetector {
             //1行目を読み飛ばす
             String s =  nr.readLine();
             //前回読んだところまで進む
-            for(int i = 0; i < tripleCount; i++) {
+            for(int i = 0; i <= tripleCount; i++) {
                 nr.readLine();
             }
         
             //未読トリプルの検査
             while((s = nr.readLine()) != null){
                  //configFileに50行やったら書き込み
-                if(tripleCount%10 == 0){
+                if(tripleCount%50 == 0){
                     config.addProperty("tripleCount", String.valueOf(tripleCount));
                     System.out.println("CurrentCount: " + tripleCount);
                 }
@@ -94,7 +94,7 @@ public class RedirectDetector {
                      */               
                     pw = new PrintWriter(new BufferedWriter(new FileWriter(new File(writeFileName), true)));
                     pw.println("NoEntry\t<" +connector.preUrl.toString() + ">, <" + connector.currentUrl + "> " 
-                            + connector.getResponseCode() + ", " + connector.getResponseMessage() + ", count: " + (tripleCount));
+                            + connector.getResponseCode() + ", " + connector.getResponseMessage() + "  count: " + (tripleCount));
                     pw.close();
                 }
                 tripleCount++;
