@@ -52,6 +52,7 @@ public class RedirectDetector {
             //file open
             nr = new LineNumberReader(new FileReader(readFileName));
             
+            //読み込みs
             String s;
             if(config.getProperty("tripleCount").equals("0")) {
                 //1行目を読み飛ばす
