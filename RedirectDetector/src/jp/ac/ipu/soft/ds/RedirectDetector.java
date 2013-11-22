@@ -36,6 +36,7 @@ public class RedirectDetector {
         
         int tripleCount = 0;
         int redirectCount = 0;
+        int notFoundCount = 0;
         
         /*
             保存データの書式設定
@@ -99,8 +100,8 @@ public class RedirectDetector {
                 }
                 
                 if(connector.isNoEntry()) {
-                    System.out.println("\tFind NoEntry :" + ++redirectCount);
-                    config.addProperty("redirectCount", String.valueOf(redirectCount));
+                    System.out.println("\tFind NoEntry :" + ++notFoundCount);
+                    config.addProperty("NotFoundCount", String.valueOf(notFoundCount));
                     config.storeToXML(readFileName);
                     
                     /* 
