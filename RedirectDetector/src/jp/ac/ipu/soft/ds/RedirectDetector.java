@@ -75,18 +75,18 @@ public class RedirectDetector {
                 
                 int i = 1;
                 while(400 < connector.getResponseCode() &&  connector.getResponseCode() < 600) {
-                    Thread.sleep(30000*i++);
+                    Thread.sleep(45000*i++);
                     connector = new DBpediaConnector(new URL(getSubjectString(s)));
                     if(i < 5){
                         break;
                     }
-
                 }
                
                 //リダイレクト検出
                 if(connector.isRedirect()) {
                     System.out.println("\tFind Redirect :"  + ++redirectCount);
-                    config.addProperty("redirectCount", "redirectCount");
+                    config.addProperty("redirectCount", String.valueOf(redirectCount));
+                    config.storeToXML(readFileName);
 
                     /* 
                      * 出力ファイルに、以前のURL, 現在のURL, レスポンスメッセージ, レスポンスコード, 行番号を書き込み
@@ -100,7 +100,8 @@ public class RedirectDetector {
                 
                 if(connector.isNoEntry()) {
                     System.out.println("\tFind NoEntry :" + ++redirectCount);
-                    config.addProperty("redirectCount", "redirectCount");
+                    config.addProperty("redirectCount", String.valueOf(redirectCount));
+                    config.storeToXML(readFileName);
                     
                     /* 
                      * 出力ファイルに、以前のURL, 現在のURL, レスポンスメッセージ, レスポンスコード, 行番号を書き込み
