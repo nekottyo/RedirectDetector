@@ -6,12 +6,12 @@
 
 package jp.ac.ipu.soft.ds;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.LineNumberReader;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.text.DateFormat;
@@ -29,15 +29,15 @@ public class RedirectDetector {
      */
     @SuppressWarnings("empty-statement")
     public static void main(String[] args) {
-        LineNumberReader nr = null;
+        BufferedReader br = null;
         PrintWriter pw = null;
         ConfigrationXML config = new ConfigrationXML(configFileName);
         
         
-        int tripleCount = 0;
+        String s = null;
+        int lineCount = 0;
         int redirectCount = 0;
         int notFoundCount = 0;
-        
         /*
             保存データの書式設定
         */
@@ -47,27 +47,27 @@ public class RedirectDetector {
         String writeFileName = "./data/" + myFormat.format(myCal.getTime()) + "redirects.txt";        
 
         try {              
-            tripleCount = Integer.parseInt(config.getProperty("tripleCount"));
+            lineCount = Integer.parseInt(config.getProperty("tripleCount"));
 
             //file open
-            nr = new LineNumberReader(new FileReader(readFileName));
+            br = new BufferedReader(new FileReader(readFileName));
             
-            //読み込みs
-            String s;
             if(config.getProperty("tripleCount").equals("0")) {
                 //1行目を読み飛ばす
-                s =  nr.readLine();
-            }
-            //前回読んだところまで進む
-            for(int i = 0; i <= nr.getLineNumber(); i++) {
-                nr.readLine();
+                s =  br.readLine();
+            } else {
+                System.err.println("Junping Line...");
+                //前回読んだところまで進む
+                for(lineCount = 0; lineCount <= Integer.valueOf(config.getProperty("tripleCount")); lineCount++) {
+                    s = br.readLine();
+                }
+                System.err.println("End Jump: " + lineCount + "\t" + s);
             }
         
             //未読トリプルの検査
-            while((s = nr.readLine()) != null){
-                int lineCount = nr.getLineNumber();
+            while((s = br.readLine()) != null){
                  //configFileに50行やったら書き込み
-                if(tripleCount%50 == 0){
+                if(lineCount%50 == 0){
                     config.addProperty("tripleCount", String.valueOf(lineCount));
                     config.storeToXML(configFileName);
                     System.out.println("CurrentCount: " + lineCount);
@@ -77,18 +77,19 @@ public class RedirectDetector {
                 DBpediaConnector connector = new DBpediaConnector(new URL(getSubjectString(s)));
 
                 //現在の状況を表示
+                System.err.println("Got Connection");
                 System.out.println(connector.toString());
-                
-                
-                int i = 1;
+                         
+                int i = 2;
                 while(400 < connector.getResponseCode() &&  connector.getResponseCode() < 600) {
+                    System.err.println("Bad Gateway: " + i);
                     Thread.sleep(45000*i++);
                     connector = new DBpediaConnector(new URL(getSubjectString(s)));
-                    if(i < 5){
+                    if(i > 5){
                         break;
                     }
                 }
-               
+                
                 //リダイレクト検出
                 if(connector.isRedirect()) {
                     System.out.println("\tFind Redirect :"  + ++redirectCount);
