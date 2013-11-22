@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<entry key="tripleCount">1400</entry>
+<entry key="tripleCount">1450</entry>
 <entry key="readFileName">./data/38/labels_en.nt</entry>
 <entry key="redirectCount">redirectCount</entry>
 </properties>

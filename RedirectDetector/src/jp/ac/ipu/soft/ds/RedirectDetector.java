@@ -51,8 +51,11 @@ public class RedirectDetector {
 
             //file open
             nr = new LineNumberReader(new FileReader(readFileName));
-            //1行目を読み飛ばす
-            String s =  nr.readLine();
+            
+            if(config.getProperty("tripleCount").equals("0")) {
+                //1行目を読み飛ばす
+                String s =  nr.readLine();
+            }
             //前回読んだところまで進む
             for(int i = 0; i <= tripleCount; i++) {
                 nr.readLine();
@@ -101,7 +104,7 @@ public class RedirectDetector {
                 
                 if(connector.isNoEntry()) {
                     System.out.println("\tFind NoEntry :" + ++notFoundCount);
-                    config.addProperty("NotFoundCount", String.valueOf(notFoundCount));
+                    config.addProperty("notFoundCount", String.valueOf(notFoundCount));
                     config.storeToXML(readFileName);
                     
                     /* 
