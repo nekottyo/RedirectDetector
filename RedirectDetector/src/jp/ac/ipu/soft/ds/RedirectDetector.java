@@ -52,9 +52,10 @@ public class RedirectDetector {
             //file open
             nr = new LineNumberReader(new FileReader(readFileName));
             
+            String s;
             if(config.getProperty("tripleCount").equals("0")) {
                 //1行目を読み飛ばす
-                String s =  nr.readLine();
+                s =  nr.readLine();
             }
             //前回読んだところまで進む
             for(int i = 0; i <= tripleCount; i++) {
