@@ -55,7 +55,7 @@ public class HtmlParser {
         } 
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         try {
             //HtmlParser parser = new HtmlParser(new URL("http://dbpedia.org/resource/Ans"));
             DBpediaConnector connector = new DBpediaConnector(new URL("http://dbpedia.org/page/Japanaaaa"));
