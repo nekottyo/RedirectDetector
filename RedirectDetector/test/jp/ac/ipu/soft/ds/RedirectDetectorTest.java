@@ -45,7 +45,7 @@ public class RedirectDetectorTest {
      * Test of main method, of class RedirectDetector.
      */
     @Test
-    public void testMain() throws IOException {
+    public void testMain() throws IOException, InterruptedException {
          //コネクションを確立
         DBpediaConnector connector = new DBpediaConnector(new URL("http://dbpedia.org/resource/Abbath_Doom_Occuldfdeta"));
 
