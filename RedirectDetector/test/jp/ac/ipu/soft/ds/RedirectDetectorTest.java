@@ -8,7 +8,6 @@ package jp.ac.ipu.soft.ds;
 
 import java.io.IOException;
 import java.net.URL;
-import static jp.ac.ipu.soft.ds.RedirectDetector.getSubjectString;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
